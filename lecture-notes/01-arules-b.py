@@ -8,7 +8,7 @@ import plotly.express as px    # interactive plotting for notebook environments
 from mlxtend.frequent_patterns import apriori, association_rules
 
 # my BILLING project in Google Cloud - replace "questrom" with your project
-PROJECT = "questrom"
+PROJECT = "ba820-avs"
 
 # SQL
 SQL = """
