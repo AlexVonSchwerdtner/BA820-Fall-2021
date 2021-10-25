@@ -106,19 +106,6 @@ dendrogram(hc1,
 plt.axvline(x=DIST, c='grey', lw=1, linestyle='dashed')
 plt.show()
 
-# another advanced plot
-METHODS = ['single', 'complete', 'average', 'ward']
-plt.figure(figsize=(15,5))
-# loop and build our plot
-for i, m in enumerate(METHODS):
-  plt.subplot(1, 4, i+1)
-  plt.title(m)
-  dendrogram(linkage(cars.values, method=m),
-             labels = cars.index,
-             leaf_rotation=90,
-             leaf_font_size=10)  
-plt.show()
-
 # how to identify the clusters
 fcluster(hc1,2,criterion='maxclust')
 cars2['cluster1'] = fcluster(hc1,2,criterion='maxclust')
