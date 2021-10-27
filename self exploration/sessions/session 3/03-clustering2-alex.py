@@ -30,7 +30,7 @@ import scikitplot as skplt
 
 
 
-# Review of hClustering
+# Review of distance h Clustering
 
 # dataset urls:
 # https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/Election08.csv
