@@ -37,17 +37,62 @@ from sklearn.preprocessing import StandardScaler
 import scikitplot as skplt
 
 
-# COLAB setup ------------------------------------------
-# from google.colab import auth
-# auth.authenticate_user()
-# PROJECT = ''    # <------ change to your project
-# SQL = "SELECT * from `questrom.datasets.judges`"
-# judges = pd.read_gbq(SQL, PROJECT)
+#PROJECT = 'ba820-avs'   
+#SQL = "SELECT * from `questrom.datasets.judges`"
+#judges = pd.read_gbq(SQL, PROJECT)
 
 
 # dataset urls:
 # https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/Election08.csv
 # https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/MedGPA.csv
+
+
+election = pd.read_csv("https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/Election08.csv")
+election.shape
+election.head(3)
+election.describe
+
+# add state abbreviation as the index
+election.set_index("Abr", inplace=True)
+election.head()
+
+# keep just the numerical columns
+election.drop('State', axis=1, inplace=True)
+
+election2 = election.loc[:,'Income':'Dem.Rep',]
+election2.head()
+
+# scaler
+scaler = StandardScaler()
+election_scaled = scaler.fit_transform(election2)
+type(election_scaled)
+
+# cluster
+hc1 = linkage(election_scaled, method='complete')
+
+
+# create the plot
+plt.figure(figsize=(15,5))
+dendrogram(hc1)
+plt.show()
+
+# create 4 clusters
+cluster = fcluster(hc1, 4,criterion='maxclust')
+cluster
+
+# add cluster column to the data
+election['cluster'] = cluster
+
+# simple profile of a cluster
+election.groupby('cluster')['ObamaWin'].mean()
+election
+
+# counting the amount of records in each cluster
+election.cluster.value_counts()
+
+
+
+
 
 
 # useful code snippets below ---------------------------------
