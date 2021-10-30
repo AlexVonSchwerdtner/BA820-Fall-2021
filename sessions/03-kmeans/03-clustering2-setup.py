@@ -2,7 +2,7 @@
 ## Expand on Distance and now apply Kmeans
 ## - Kmeans applications
 ## - Evaluate cluster solutions 
-## - hands on with Kmeans and other approaches
+## - hands on with Kmeans and quick review of DBSCan
 
 # resources
 # https://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html#sphx-glr-auto-examples-cluster-plot-kmeans-silhouette-analysis-py
