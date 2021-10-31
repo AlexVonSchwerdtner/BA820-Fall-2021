@@ -39,17 +39,22 @@ This file can be easily read into python via
 import pandas as pd
 forums = pd.read_pickle("/Users/alexandervonschwerdtner/Desktop/BA820 - Unsupervised Machine Learning & Text Analytics/BA820-Fall-2021/assignments/assignment-01/forums.pkl")
 
+forums.shape
 forums.head()
 
+forums.sample(3)
+forums.describe().T
 
+# add text column as the index
+forums.set_index("text", inplace=True)
+forums.head()
 
+# scaler
+scaler = StandardScaler()
+forums_scaled = scaler.fit_transform(forums)
+type(forums_scaled)
 
-# Review of distance h Clustering
-
-# dataset urls:
-# https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/Election08.csv
-# https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/MedGPA.csv
-
+#####################
 
 election = pd.read_csv("https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/Election08.csv")
 election.shape
