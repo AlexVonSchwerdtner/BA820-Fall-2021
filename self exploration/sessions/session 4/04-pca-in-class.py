@@ -17,6 +17,7 @@
 # imports
 import numpy as np
 import pandas as pd
+from scipy.sparse import data
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -56,11 +57,11 @@ SQL = "SELECT * from `questrom.datasets.diamonds`"
 diamonds = pd.read_gbq(SQL, PROJECT)
 
 diamonds.shape
-diamonds.describe()
 diamonds.info()
 diamonds.head(3)
 diamonds.drop(['cut','color','clarity'], axis=1, inplace=True)
-diamonds.sample(3)
+
+diamonds.info()
 
 diamonds.dtypes
 
@@ -88,6 +89,91 @@ plt.show()
 
 # silouhette plot
 skplt.metrics.plot_silhouette(diamonds_scaled, k5.predict(diamonds_scaled), figsize=(7,7))
+plt.show()
+
+
+######################
+## PCA
+######################
+
+PROJECT = 'ba820-avs'
+SQL = "SELECT * from `questrom.datasets.judges`"
+judges = pd.read_gbq(SQL, PROJECT)
+
+judges.info()
+
+# set index to judge
+# judges.set_index('judge')
+judges.index = judges.judge
+del judges['judge']
+judges.head(3)
+
+# checking if we need to scale
+judges.describe().T       # -- the means are verz close to each other & the st. dev are small
+
+# looking at correlation
+jc = judges.corr()
+sns.heatmap(jc, cmap='Reds', center=0)
+plt.show()
+
+# fit our first model for PCA
+pca = PCA()
+pcs = pca.fit_transform(judges)
+
+pcs.shape
+
+# what is the explained variance ratio
+varexp = pca.explained_variance_ratio_
+type(varexp)
+varexp.shape
+
+
+# plot
+plt.title('Explained Variance Ratio by Component')
+sns.lineplot(range(1, len(varexp)+1), np.cumsum(varexp))
+plt.axhline(.95)
+plt.show()
+
+
+# explained variiiance (not ratio)
+explvar = pca.explained_variance_
+type(explvar)
+explvar.shape
+
+# plot
+plt.title('Explained Variance by Component')
+sns.lineplot(range(1, len(explvar)+1), explvar)
+plt.axhline(1)
+plt.show()
+
+
+##################### continuing on judges data ####################
+
+pca.n_components_
+
+comps = pca.components_
+
+COLS = ['PC' + str(i) for i in range(1, len(comps)+1)]
+
+loadings = pd.DataFrame(comps.T, columns=COLS, index=judges.columns)
+loadings
+
+# plot
+sns.heatmap(loadings, cmap='vlag')
+plt.show()
+
+# matches the shape of the judges
+pcs.shape
+judges.shape
+
+# put this back onto a new dataset
+comps_judges = pcs[:, :2]
+comps_judges.shape
+
+j = pd.DataFrame(comps_judges, columns=['c1','c2'], index=judges.index)
+j.head()
+
+sns.scatterplot(data=j, x='c1',y='c2')
 plt.show()
 
 
