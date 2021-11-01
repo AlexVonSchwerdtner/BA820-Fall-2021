@@ -49,6 +49,8 @@ forums.describe().T
 forums.set_index("text", inplace=True)
 forums.head()
 
+forums.isna().sum().sum()
+
 # scaler
 scaler = StandardScaler()
 forums_scaled = scaler.fit_transform(forums)
