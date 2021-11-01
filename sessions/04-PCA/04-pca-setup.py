@@ -51,6 +51,34 @@ from matplotlib import cm
 # 4. generate the silohouette plot for the solution
 # 5. create a boxplot of the column carat by cluster label (one boxplot for each cluster)
 
+PROJECT = 'ba820-avs'
+SQL = "SELECT * from `questrom.datasets.diamonds`"
+diamonds = pd.read_gbq(SQL, PROJECT)
+
+diamonds.shape
+diamonds.describe()
+diamonds.head(3)
+diamonds.drop(['cut','color','clarity'], axis=1, inplace=True)
+diamonds.sample(3)
+
+diamonds.dtypes
+
+diamonds.describe().T
+
+sc = StandardScaler()
+diamonds_scaled = sc.fit_transform(diamonds)
+
+# fit our first kmeans - 5 clusters
+k5 = KMeans(5)
+k5.fit(diamonds_scaled)
+
+k5_labs = k5.predict(diamonds_scaled)
+k5_labs
+
+k5.n_iter_
+
+skplt.metrics.plot_silhouette(diamonds_scaled, k5.predict(diamonds_scaled), figsize=(7,7))
+plt.show()
 
 
 ##############################################################################
