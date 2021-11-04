@@ -27,7 +27,7 @@ import scikitplot as skplot
 ################################################################
 
 # read file into python environment
-forums = pd.read_pickle("/Users/alexandervonschwerdtner/Desktop/BA820 - Unsupervised Machine Learning & Text Analytics/BA820-Fall-2021/assignments/assignment-01/forums.pkl")
+forums = pd.read_pickle("/Users/alexandervonschwerdtner/Desktop/BA820 - Unsupervised Machine Learning & Text Analytics/BA820-Fall-2021/assignments/assignment-01/.forums.pkl")
 
 # having a closer look at the dataset
 forums.shape
