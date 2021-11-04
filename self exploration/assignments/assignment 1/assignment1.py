@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from seaborn.palettes import color_palette
 import sklearn
 
 from scipy.spatial.distance import pdist
@@ -29,8 +30,6 @@ from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
 
 import scikitplot as skplot
 
-# color maps
-from matplotlib import cm
 
 
 # read file into python environment
@@ -56,6 +55,11 @@ forums.head()
 # making sure there is no missing data
 forums.isna().sum().sum()
 
+# checking for duplicates and dropping them
+forums.duplicated().sum()
+forums.drop_duplicates(inplace=True)
+forums.duplicated().sum()
+
 ################################
 ##PCA
 ################################
@@ -72,12 +76,11 @@ pcs = pca.fit_transform(forums)
 pcs.shape
 type(pcs)
 
-
 ## what is the explained variance ratio
 varexp = pca.explained_variance_ratio_
 type(varexp)
 varexp.shape
-
+np.sum(varexp)
 
 # plot 
 plt.title("Explained Variance Ratio by Component")
@@ -85,22 +88,19 @@ sns.lineplot(range(1, len(varexp)+1), varexp)
 plt.show()
 
 # cumulative view
-plt.title("Explained Variance Ratio by Component")
+plt.title("Cumulative Explained Variance Ratio by Component")
 sns.lineplot(range(1, len(varexp)+1), np.cumsum(varexp))
 plt.axhline(.95)
 plt.show()
 
-# explained variance (not ratio)
+# explained variance (not ratio) -- eigenvalue
 explvar =  pca.explained_variance_
 type(explvar)
 explvar.shape
-
-plt.title("Explained Variance Ratio by Component")
+plt.title("Eigenvalue")
 sns.lineplot(range(1, len(varexp)+1), explvar)
-plt.axhline(1)
+#plt.axhline(1)
 plt.show()
-
-##########
 
 pca.n_components_
 
@@ -119,46 +119,85 @@ plt.show()
 pcs.shape
 forums.shape
 
-# put this back onto a new dataset
-comps_forums = pcs[:, :2]
+# put this back onto a new dataset 
+# -------------------------------------
+# referring back to the "Eigenvalue" and the "Explained Variance Ratio by Component"
+# I would choose to only keep 11 components 
+comps_forums = pcs[:, :11]
 comps_forums.shape
 
-f = pd.DataFrame(comps_forums, columns = ['c1', 'c2'], index=forums.index)
+f = pd.DataFrame(comps_forums, columns = ['c1', 'c2','c3','c4','c5','c6','c7','c8','c9','c10','c11'], index=forums.index)
 f.head(3)
 
-sns.scatterplot(data=f, x="c1", y="c2")
+sns.scatterplot(data=f)
 plt.show()
 
 
 ################################
-##HClust
+## Hierarchical Clustering
 ################################
+
+
+METHODS = ['single', 'complete', 'average', 'ward']
+plt.figure(figsize=(15,5))
 
 # loop and build our plot
 for i, m in enumerate(METHODS):
   plt.subplot(1, 4, i+1)
   plt.title(m)
-  dendrogram(linkage(forums.values, method=m),
-             labels = forums.index)
-             #leaf_rotation=90,
-             #leaf_font_size=10)
-plt.tight_layout()
+  dendrogram(linkage(forums, method=m),
+             leaf_rotation=90,
+             leaf_font_size=5)
 plt.show()
 
-
+# choosing ward HClust approach
 plt.figure(figsize=(10, 6))
 
-avg = linkage(forums.values, method="average")
-dendrogram(avg,
-          labels = forums.index,
+ward = linkage(forums, method="ward")
+dendrogram(ward,
           leaf_rotation=90,
           leaf_font_size=10, color_threshold=4)
-
-plt.axhline(y=4)
+plt.title('HClust - Ward')
+plt.axhline(y = 13, color ="black", linestyle ="--")
 plt.show()
 
 # the clusters
-hc_labs = fcluster(avg, 4, criterion="distance")
+hc_labs = fcluster(ward, 4, criterion="maxclust")
+
+####################################################################################
+
+# having a closer look at the "ward" method output
+ward.shape
+type(ward)
+
+# looking at the distance added at each step
+len(ward)
+
+# looking at the growth in distance added
+added_dist = ward[:, 2]
+added_dist
+
+# calculate the diff at each join
+penalty = np.diff(added_dist)
+penalty[-4:]
+
+# elbow method - what clustering step starts to show signs of explosion in distance
+# remember, we lost one via the diff
+sns.lineplot(range(1, len(penalty)+1), penalty)
+plt.show()
+
+ward_frame = pd.DataFrame(data=ward)
+ward_frame.shape
+ward_frame
+
+ward_distances = ward_frame[2]
+ward_distances.shape
+ward_distances.mean()
+ward_distances.max()
+ward_distances.min()
+
+####################################################################################
+
 
 # the metrics
 hc_silo = silhouette_score(forums, hc_labs)
@@ -169,7 +208,8 @@ np.unique(hc_labs)
 ################################
 ##Kmeans 
 ################################
-KRANGE = range(2, 30)
+# Declaring the range for k
+KRANGE = range(2,20)
 
 # Declaring variables for use
 inertia = []
@@ -185,13 +225,14 @@ for k in KRANGE:
 # Plotting
 plt.figure(figsize=(15,5))
 
-
 plt.subplot(1, 2, 1)
 plt.title("Inertia")
+plt.axvline(x = 4, color ="black", linestyle ="--")
 sns.lineplot(KRANGE, inertia)
 
 plt.subplot(1, 2, 2)
 plt.title("Silohouette Score")
+plt.axvline(x = 4, color ="black", linestyle ="--")
 sns.lineplot(KRANGE, silo)
 
 plt.show()
@@ -200,54 +241,49 @@ for i, s in enumerate(silo[:30]):
   print(i+2,s) # +2 to align num clusters with value
 
 # # get the model
-k3 = KMeans(3)
-k3_labs = k3.fit_predict(forums)
+k4 = KMeans(4)
+k4_labs = k4.fit_predict(forums)
 
 # # metrics
-k3_silo = silhouette_score(forums, k3_labs)
-k9_ssamps = silhouette_samples(forums, k3_labs)
-np.unique(k3_labs)
+k4_silo = silhouette_score(forums, k4_labs)
+k4_ssamps = silhouette_samples(forums, k4_labs)
+np.unique(k4_labs)
 
-#################### Comparing models via silo
+
+
+#################### Comparing models via silo ###########################
 
 # Hclust
-skplot.metrics.plot_silhouette(forums, hc_labs, title="HClust", figsize=(15,5))
+skplot.metrics.plot_silhouette(forums, hc_labs, title="HClust - 4", figsize=(15,5))
 plt.show()
 
 # KMEans
-skplot.metrics.plot_silhouette(forums, k3_labs, title="KMeans - 3", figsize=(15,5))
+skplot.metrics.plot_silhouette(forums, k4_labs, title="KMeans - 4", figsize=(15,5))
 plt.show()
 
-sns.heatmap(forums, center=0, xticklabels=forums.columns)
-plt.show()
+# Cluster Method selection:
+# - analyizing the two cluster methods it made sense for both to go with a k=5
+# - Hclust Silhouette score: 0.123 (k=4)
+# - KMeans Silhouette score: 0.110 (k4)
+# - Hierarchical Cluster seems to cluster the data slightly better
+# - Choosing to stick with Hclust for categorizing the forum product based on theme of the discussion
 
-forums.k3
+# # profiling the texts
+# forums['k4_labs'] = k4_labs
+forums['hc_labs'] = hc_labs
+forums
 
-# useful code snippets below ---------------------------------
+# # counts by cluster
+# forums.k4_labs.value_counts(sort=False)
+forums.hc_labs.value_counts(sort=False)
 
-# scale the data
-# el_scaler = StandardScaler()
-# el_scaler.fit(election)
-# election_scaled = el_scaler.transform(election)
+forums[forums['hc_labs']==1]
+forums[forums['hc_labs']==2]
+forums[forums['hc_labs']==3]
+forums[forums['hc_labs']==4]
 
-# kmeans
-# k5 = KMeans(5,  n_init=100)
-# judges['k5'] = k5.fit_predict(j)
-
-
-# k5_centers = k5.cluster_centers_
-# sns.scatterplot(data=judges, x="CONT", y="INTG", cmap="virdis", hue="k5")
-# plt.scatter(k5_centers[:,0], k5_centers[:,1], c="g", s=100)
-
-
-# KRANGE = range(2, 30)
-# # containers
-# ss = []
-# for k in KRANGE:
-#   km = KMeans(k)
-#   lab = km.fit_predict(j)
-#   ss.append(km.inertia_)
-
-
-# skplt.metrics.plot_silhouette(j, k5.predict(j), figsize=(7,7))
-
+# OBSERVATIONS:
+#1. cluster 1 = .....
+#2. cluster 2 = .....
+#3. cluster 3 = .....
+#4. cluster 4 = .....
