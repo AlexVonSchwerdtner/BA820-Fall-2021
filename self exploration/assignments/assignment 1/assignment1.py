@@ -12,6 +12,7 @@ This file can be easily read into python via
 # imports
 import numpy as np
 import pandas as pd
+from pandas.core.indexes.base import Index
 import seaborn as sns
 import matplotlib.pyplot as plt
 from seaborn.palettes import color_palette
@@ -42,9 +43,6 @@ forums.head()
 forums.info()
 forums.dtypes
 
-# not scaling, data seems to be on the same scale (each variable has equal weight)
-forums.describe().T
-
 # add text column as the index
 # forums.set_index("text", inplace=True)
 # forums.head()
@@ -59,6 +57,9 @@ forums.isna().sum().sum()
 forums.duplicated().sum()
 forums.drop_duplicates(inplace=True)
 forums.duplicated().sum()
+
+# not scaling, data seems to be on the same scale (each variable has equal weight)
+forums.describe().T
 
 ################################
 ##PCA
@@ -277,10 +278,15 @@ forums
 # forums.k4_labs.value_counts(sort=False)
 forums.hc_labs.value_counts(sort=False)
 
-forums[forums['hc_labs']==1]
-forums[forums['hc_labs']==2]
-forums[forums['hc_labs']==3]
-forums[forums['hc_labs']==4]
+forums[forums['hc_labs']==1].index
+forums[forums['hc_labs']==2].index
+forums[forums['hc_labs']==3].index
+forums[forums['hc_labs']==4].index
+
+forums[forums['hc_labs']==1].describe()
+forums[forums['hc_labs']==2].describe()
+forums[forums['hc_labs']==3].describe()
+forums[forums['hc_labs']==4].describe()
 
 # OBSERVATIONS:
 #1. cluster 1 = .....
