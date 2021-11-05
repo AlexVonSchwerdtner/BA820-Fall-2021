@@ -1,33 +1,26 @@
 # Assignment 1
+# BA820 - Unsupervised Machine Learning
+# Alexander von Schwerdtner
+# 11.05.2021
 
 # imports
 import numpy as np
 import pandas as pd
-from pandas.core.indexes.base import Index
 import seaborn as sns
+import scikitplot as skplot
 import matplotlib.pyplot as plt
-from seaborn.palettes import color_palette
-import sklearn
 
-from scipy.spatial.distance import pdist
-
-from sklearn import metrics 
-from sklearn.datasets import make_blobs
-from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans, DBSCAN
-from sklearn.neighbors import NearestNeighbors
+from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_samples, silhouette_score
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
-
-import scikitplot as skplot
 
 ################################################################
 ## Data Pre-Processing & Data Cleaning
 ################################################################
 
 # read file into python environment
-forums = pd.read_pickle("/Users/alexandervonschwerdtner/Desktop/BA820 - Unsupervised Machine Learning & Text Analytics/BA820-Fall-2021/assignments/assignment-01/.forums.pkl")
+forums = pd.read_pickle("/Users/alexandervonschwerdtner/Desktop/BA820 - Unsupervised Machine Learning & Text Analytics/BA820-Fall-2021/assignments/assignment-01/forums.pkl")
 
 # having a closer look at the dataset
 forums.shape
@@ -39,9 +32,6 @@ forums.dtypes
 # add text column as the index
 forums.set_index("text", inplace=True)
 forums.head()
-# forums.index = forums.text
-# del forums['text']
-# forums.head()
 
 # making sure there is no missing data
 forums.isna().sum().sum()
@@ -61,6 +51,7 @@ forums.describe().T
 # correlation matrix
 fc = forums.corr()
 sns.heatmap(fc, cmap="Reds", center=0)
+plt.title('Correlation Heatmap of all Columns')
 plt.show()
 
 # fit our first model for PCA
@@ -84,7 +75,6 @@ plt.show()
 # cumulative view
 plt.title("Cumulative Explained Variance Ratio by Component")
 sns.lineplot(range(1, len(varexp)+1), np.cumsum(varexp))
-plt.axhline(.95)
 plt.show()
 
 # explained variance (not ratio) -- eigenvalue
@@ -93,7 +83,6 @@ type(explvar)
 explvar.shape
 plt.title("Eigenvalue")
 sns.lineplot(range(1, len(varexp)+1), explvar)
-#plt.axhline(1)
 plt.show()
 
 pca.n_components_
@@ -104,10 +93,6 @@ COLS = ["PC" + str(i) for i in range(1, len(comps)+1)]
 
 loadings = pd.DataFrame(comps.T, columns=COLS, index=forums.columns)
 loadings
-
-# plot of this
-sns.heatmap(loadings, cmap="vlag")
-plt.show()
 
 # matches the shape of the forums
 pcs.shape
@@ -132,6 +117,7 @@ f.head(3)
 ################################################################
 
 METHODS = ['single', 'complete', 'average', 'ward']
+
 plt.figure(figsize=(15,7))
 
 # loop and build our plot
@@ -177,7 +163,6 @@ added_dist.min()
 hc_silo = silhouette_score(forums, hc_labs)
 hc_ssamps = silhouette_samples(forums, hc_labs)
 np.unique(hc_labs)
-
 
 ################################################################
 ## KMeans Clustering 
@@ -241,7 +226,7 @@ plt.show()
 # Cluster Method selection:
 # - analyizing the two cluster methods it made sense for both to go with a k=5
 # - Hclust Silhouette score: 0.123 (k=4)
-# - KMeans Silhouette score: 0.110 (k4)
+# - KMeans Silhouette score: 0.110 (k=4)
 # - Hierarchical Cluster seems to cluster the data slightly better
 # - Choosing to stick with Hclust for categorizing the forum product based on theme of the discussion
 
@@ -287,25 +272,25 @@ forums_hclust[forums_hclust['hc_labs']==2].describe()
 forums_hclust[forums_hclust['hc_labs']==3].describe()
 forums_hclust[forums_hclust['hc_labs']==4].describe()
 
-# OBSERVATIONS:
-#1. cluster 1 = .....
-#2. cluster 2 = .....
-#3. cluster 3 = .....
-#4. cluster 4 = .....
+# correlation matrix
+fc = forums_hclust[forums_hclust['hc_labs']==2].corr()
+sns.heatmap(fc, cmap="Reds", center=0)
+plt.title('forums_hclust2 correlation')
+plt.show()
+
+# OBSERVATIONS of reocurring themes:
+#1. cluster 1 = Jet fighter, WWII, Military, WWI, Computer, Space, Computer, Hockey
+#2. cluster 2 = Hockey, Computer 
+#3. cluster 3 = Electronics
+#4. cluster 4 = Software
 
 # KMeans clustering approach
-forums_kmeans[forums_kmeans['hc_labs']==1].index
-forums_kmeans[forums_kmeans['hc_labs']==2].index
-forums_kmeans[forums_kmeans['hc_labs']==3].index
-forums_kmeans[forums_kmeans['hc_labs']==4].index
+forums_kmeans[forums_kmeans['k4_labs']==0].index
+forums_kmeans[forums_kmeans['k4_labs']==1].index
+forums_kmeans[forums_kmeans['k4_labs']==2].index
+forums_kmeans[forums_kmeans['k4_labs']==3].index
 
-forums_kmeans[forums_kmeans['hc_labs']==1].describe()
-forums_kmeans[forums_kmeans['hc_labs']==2].describe()
-forums_kmeans[forums_kmeans['hc_labs']==3].describe()
-forums_kmeans[forums_kmeans['hc_labs']==4].describe()
-
-# OBSERVATIONS:
-#1. cluster 1 = .....
-#2. cluster 2 = .....
-#3. cluster 3 = .....
-#4. cluster 4 = .....
+forums_kmeans[forums_kmeans['k4_labs']==0].describe()
+forums_kmeans[forums_kmeans['k4_labs']==1].describe()
+forums_kmeans[forums_kmeans['k4_labs']==2].describe()
+forums_kmeans[forums_kmeans['k4_labs']==3].describe()
