@@ -4,6 +4,8 @@
 from fastapitableau import FastAPITableau
 from typing import List
 from afinn import Afinn
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import PCA
 
 app = FastAPITableau(
     title="Simple Sentiment example",
@@ -21,6 +23,4 @@ afinn = Afinn(language='en')
 def sentiment(text: List[str]) -> List[float]:
     scores = [afinn.score(t) for t in text]
     return scores
-
-
 
