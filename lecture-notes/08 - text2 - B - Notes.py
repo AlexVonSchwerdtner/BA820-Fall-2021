@@ -314,31 +314,31 @@ cv.vocabulary_
 ##
 
 # the same data
-# corpus = ["Can't I have it all for $5.00 @customerservice #help", 
-#           'I want my MTV!']
+corpus = ["Can't I have it all for $5.00 @customerservice #help", 
+          'I want my MTV!']
 
 # equivalent to CountVectorizer -> TfidfTransformer
 # basically if you want tfidf, do this, it saves a step
 # and you have the same options for parsing if you like
 
-# tfidf = TfidfVectorizer(token_pattern="[\w']+", ngram_range=(1,2))
-# tfidf.fit(corpus)
+tfidf = TfidfVectorizer(token_pattern="[\w']+", ngram_range=(1,2))
+tfidf.fit(corpus)
 
 ## just to call out, being able to specify the pattern can be 
 ## really powerful for specific tasks and business needs
 
 # lets put this into a dataframe
-# idf = tfidf.transform(corpus)
+idf = tfidf.transform(corpus)
 
-# idf = pd.DataFrame(idf.toarray(), columns=tfidf.get_feature_names_out())
+idf = pd.DataFrame(idf.toarray(), columns=tfidf.get_feature_names_out())
 
 
 
 # we could even heatmap this to help understand the intuition here
 
-# plt.figure(figsize=(4,6))
-# sns.heatmap(idf.T, xticklabels=True, yticklabels=True, cmap='Reds')
-# plt.show()
+plt.figure(figsize=(4,6))
+sns.heatmap(idf.T, xticklabels=True, yticklabels=True, cmap='Reds')
+plt.show()
 
 ################### NOTE:
 ## look at the weights generally, what do you see?
