@@ -29,6 +29,7 @@ Original file is located at
 ## you may need to restart the colab kernel
 
 # imports
+from posixpath import supports_unicode_filenames
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -79,46 +80,88 @@ warnings.filterwarnings("ignore")
 
 # 1. get the file and parse
 
-# import pysrt
-# subs = pysrt.open('Shrek-2001.srt', encoding='iso-8859-1')
+import pysrt
+subs = pysrt.open('/Users/alexandervonschwerdtner/Desktop/BA820 - Unsupervised Machine Learning & Text Analytics/Shrek-2001.srt', encoding='iso-8859-1')
 
 # the first message -- each entry has a text attribute we can use to build our corpus
-# print(subs[0].text)
+print(subs[0].text)
 
 # make a corpus (list of texts)
 
+corpus = []
+for i in subs:
+    corpus.append(i.text)
+    
+# or
+corpus = [ sub.text for sub in subs]
+corpus[:3]
 
 
+# score the sentiment
+# Afinn
 
+afinn = Afinn("en")
+sents = [afinn.score(doc) for doc in corpus]
 
+sents[:3]
 
+# hypothesis - can we use sentiment analysis to proxy for the arc of the story
+
+df = pd.DataFrame({'scene':corpus, 'sent':sents})
+
+df.head(3)
+
+# plot
+sns.lineplot(x=df.index, y='sent', data=df)
+plt.show()
+
+# moving average
+df['ma20'] = df.sent.rolling(20).mean()
+
+plt.figure(figsize=(10,4))
+sns.lineplot(x=df.index, y='ma20',data=df)
+plt.show()
 
 ##################################### Quick Recap - Tokenization
 ##################################### 
 ## nltk has built in tokenizers
 ## lets extend what we saw in the context of a sklearn flow
 
-# from nltk.tokenize import word_tokenize, TweetTokenizer
+from nltk.tokenize import word_tokenize, TweetTokenizer
 
 # a simple corpus
 
-# corpus = ['Brock has a dog named Bodhi', 
-#           '@brocktibert loves to write code in #pydata']
+corpus = ['Brock has a dog named Bodhi', 
+          '@brocktibert loves to write code in #pydata']
 
 # word tokenizer is basic
 # this is helpful as a starting point -- we will see some tools want a list of lists, with each entry considered a token
 
+[word_tokenize(doc) for doc in corpus]
+
 # of course, we could always go to base python
+[doc.split() for doc in corpus]
 
 # we could use TweetTokenizer
+social = TweetTokenizer()
+
+[social.tokenize(doc) for doc in corpus]
+
 
 # roll it into sklearn
 
-# def parser(text):
-#   social = TweetTokenizer()
-#   return social.tokenize(text)
+def parser(text):
+  social = TweetTokenizer()
+  return social.tokenize(text)
 
 
+cv = CountVectorizer(tokenizer=parser)
+cv.fit(corpus)
+
+dtm = cv.transform(corpus)
+
+df = pd.DataFrame(dtm.toarray(), columns=cv.get_feature_names_out())
+df
 
 ##################################### Your turn
 ###
@@ -130,10 +173,22 @@ warnings.filterwarnings("ignore")
 ###      put it back into a dataframe for review --- this isn't usually necessary, but helps with the intuition of what is happening!
 
 
+# re-create my corpus
+corpus = [sub.text for sub in subs]
 
+# the function
+def shrek(text):
+    # we could do all sorts of preprocessing
+    return word_tokenize(text)
 
+cv = CountVectorizer(tokenizer=parser)
+cv.fit(corpus)
 
+dtm = cv.transform(corpus)
 
+shrek_df = pd.DataFrame(dtm.toarray(), columns=cv.get_feature_names_out())
+shrek_df.iloc[:5,:5]
+shrek_df.shape
 
 
 
@@ -155,38 +210,40 @@ warnings.filterwarnings("ignore")
 
 # get the data -- airline tweets
 
-# SQL = "SELECT * FROM `questrom.datasets.airlines-tweets`"
 
+SQL = "SELECT * FROM `questrom.datasets.airlines-tweets`"
+PROJECT = 'ba820-avs'
+tweets = pd.read_gbq(SQL, PROJECT)
 
 
 # text -- acts like a big corpus
-# from nltk import Text
+from nltk import Text
+import nltk
 
 # get the text into the correct format
 
-# tweet_text = tweets.text.tolist()
-# print(len(intents_text))
+tweet_text = tweets.text.tolist()
 
 # put into a corpus (as if it were 1 big file, ignoring that we have intents)
 
-# corpus = " ".join(tweet_text)
+corpus = " ".join(tweet_text)
 
 # tokenize
 
-# tokens = nltk.word_tokenize(corpus)
-# len(tokens)
+tokens = nltk.word_tokenize(corpus)
+len(tokens)
 
 # put the corpus into a Text object.  
 # some nice features when we consider the corpus a blob of text that lacks 
 # structure like sentences, or by user, etc.  Just the text combined like a book chapter.
 
-# text = Text(tokens)
+text = Text(tokens)
 
 # look for the context of words
 # Key work in context, or concordance
 
 ## flight / delay / service / baggage / boston
-# text.concordance("", width=80, lines=10)
+text.concordance("flight", width=80, lines=10)
 
 
 
@@ -200,18 +257,18 @@ warnings.filterwarnings("ignore")
 
 # download the small spacy language model
 
-# model = "en_core_web_sm"
-# cli.download(model)
-# nlp = spacy.load(model)
+model = "en_core_web_sm"
+cli.download(model)
+nlp = spacy.load(model)
 
 """![](https://d33wubrfki0l68.cloudfront.net/3ad0582d97663a1272ffc4ccf09f1c5b335b17e9/7f49c/pipeline-fde48da9b43661abcdf62ab70a546d71.svg)"""
 
 # what do we have
-
+nlp.pipe_names
 # lets add additional components
 
-# nlp.add_pipe("spacytextblob")
-# nlp.add_pipe("textdescriptives")
+nlp.add_pipe("spacytextblob")
+nlp.add_pipe("textdescriptives")
 
 # review the robust NLP pipeline
 
@@ -220,7 +277,7 @@ warnings.filterwarnings("ignore")
 # lets take a sample of 100 to help keep this "fast"
 # worth noting that real datasets and balancing runtimes and performance can be at odds at times
 
-# docs = nlp.pipe(tweets.text.sample(100, random_state=820))
+docs = nlp.pipe(tweets.text.sample(100, random_state=820))
 
 # extract the summary stats from the tweet docs
 # every tweet is being run through the nlp pipeline
