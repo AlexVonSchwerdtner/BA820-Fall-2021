@@ -3,7 +3,7 @@ sandbox/
 
 .DS_Store
 
-apps/labelstudio/data/label_studio.sqlite3
+#apps/labelstudio/data/label_studio.sqlite3
 .Rhistory
 *.pyc
 
@@ -15,3 +15,6 @@ apps/streamlit-image-reco/0-preprocess.py
 apps/streamlit-image-reco/1-model.py
 apps/streamlit-image-reco/app.py
 apps/streamlit-image-reco/README.md
+
+apps/chatbot/.rasa/
+apps/chatbot/models/

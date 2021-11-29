@@ -41,9 +41,6 @@ Below are links to resources that make plotting easier for all sorts of tasks, e
 
 - [](https://realpython.com/advanced-visual-studio-code-python/)
 
-## Regex
--[](https://github.com/ziishaned/learn-regex)
--[](https://medium.com/factory-mind/regex-tutorial-a-simple-cheatsheet-by-examples-649dc1c3f285)
 
 ## Colab
 
@@ -100,6 +97,8 @@ Below are some resources for association rules.
 ## Distance and Clustering
 
 - [Great Overview of Euclidean and Cosine Distances - with python code!](https://cmry.github.io/notes/euclidean-v-cosine)
+- [Combining Numeric and Categorical Data Distance Matrices](https://colab.research.google.com/drive/1uQSBCD4avqgQnW2PxBqswThKrT_HG92Y?usp=sharing)
+- [9 Distance Measures](https://towardsdatascience.com/9-distance-measures-in-data-science-918109d069fa)
 
 ## Dimensionality Reduction
 
@@ -159,8 +158,13 @@ Below are some resources for association rules.
 - [fastText vectors - many languages](https://github.com/facebookresearch/fastText/blob/master/docs/crawl-vectors.md#models) 
 
 - [Document Vectors paper](https://cs.stanford.edu/~quocle/paragraph_vector.pdf)
+- [Keyword/Topic Extraction])https://towardsdatascience.com/keyword-extraction-methods-the-overview-35557350f8bb)
 
+## spacy
 
+- [Advanced Rule-based Matching with spacy](https://pub.towardsai.net/rule-based-matching-for-nlp-using-spacy-491f148fd4fb)
+- [How we use Entity Extraction to improve Customer Service Calls](https://medium.com/observe-ai-engineering-blog/how-we-use-entity-extraction-to-improve-compliance-in-call-centers-e5bbca14fc03)
+- [NER and Grade Level Post - Medium](https://towardsdatascience.com/explorations-in-named-entity-recognition-and-was-eleanor-roosevelt-right-671271117218)
 
 ## Scikit Resources
 
@@ -175,5 +179,5 @@ Below are some resources for association rules.
 - [Rasa example,detailed NLU file](https://github.com/RasaHQ/rasa-demo/blob/main/data/nlu/nlu.yml) 
 - [Rasa visualization tools](https://github.com/RasaHQ/rasalit) 
 - [Visualize Rasa in notebooks](https://blog.rasa.com/evaluating-rasa-nlu-models-in-jupyter/) 
-- [fastText with spacy and rasa][https://medium.com/@expanded_blue_elk_810rasa-loading-fasttext-vectors-with-spacy-1aad2a2431b] 
+- [fastText with spacy and rasa](https://medium.com/@expanded_blue_elk_810rasa-loading-fasttext-vectors-with-spacy-1aad2a2431b)
   
