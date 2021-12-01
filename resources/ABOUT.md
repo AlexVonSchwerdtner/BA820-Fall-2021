@@ -165,6 +165,7 @@ Below are some resources for association rules.
 ## spacy
 
 - [spacy 101](https://spacy.io/usage/spacy-101/)
+- [spacy stopwords - SO but great examples](https://stackoverflow.com/questions/41170726/add-remove-custom-stop-words-with-spacy)
 - [advanced Nlp with spacy](https://course.spacy.io/en/)
 - [Advanced Rule-based Matching with spacy](https://pub.towardsai.net/rule-based-matching-for-nlp-using-spacy-491f148fd4fb)
 - [How we use Entity Extraction to improve Customer Service Calls](https://medium.com/observe-ai-engineering-blog/how-we-use-entity-extraction-to-improve-compliance-in-call-centers-e5bbca14fc03)
