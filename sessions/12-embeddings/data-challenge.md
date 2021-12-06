@@ -1,6 +1,7 @@
 # About
 
 - http://34.85.195.130:8411/
+  
 - The files for the data challenge  are found in data-challenges/12-news-classification
 
 

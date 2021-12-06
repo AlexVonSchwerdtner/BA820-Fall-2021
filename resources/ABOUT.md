@@ -170,6 +170,7 @@ Below are some resources for association rules.
 - [Advanced Rule-based Matching with spacy](https://pub.towardsai.net/rule-based-matching-for-nlp-using-spacy-491f148fd4fb)
 - [How we use Entity Extraction to improve Customer Service Calls](https://medium.com/observe-ai-engineering-blog/how-we-use-entity-extraction-to-improve-compliance-in-call-centers-e5bbca14fc03)
 - [NER and Grade Level Post - Medium](https://towardsdatascience.com/explorations-in-named-entity-recognition-and-was-eleanor-roosevelt-right-671271117218)
+- [spacy annotator](https://enrico-alemani.medium.com/how-to-create-training-data-for-spacy-ner-models-using-ipywidgets-c4aa71bf61a2)
 
 ## Scikit Resources
 

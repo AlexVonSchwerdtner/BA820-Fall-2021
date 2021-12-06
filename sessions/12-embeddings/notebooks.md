@@ -8,8 +8,7 @@ https://colab.research.google.com/drive/1cQTsjichmcdlwfcNSqOaSxO6Vfg-D8bj?usp=sh
 
 > http://34.85.195.130:8411/
 
-## C - Build our own vectors!
-https://colab.research.google.com/drive/1WrtMvksvtYPIjFihqJGcdu1GQskR46uw?usp=sharing
+
 
 
 

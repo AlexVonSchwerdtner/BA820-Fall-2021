@@ -28,3 +28,14 @@ stories:
   - action: utter_did_that_help
   - intent: deny
   - action: utter_goodbye
+
+
+- story: interactive_story_1
+  steps:
+  - intent: play_music
+    entities:
+    - artist: pearl jam
+  - slot_was_set:
+    - artist: pearl jam
+  - action: utter_play_music
+
