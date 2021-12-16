@@ -7,5 +7,8 @@
 ## B
 - https://colab.research.google.com/drive/1maDaCxxbgwqXBiInir08DkqsE8ie-uF_?usp=sharing
 
+## Build your own embeddings
+- https://colab.research.google.com/drive/1EVp3_tTC77VDwswXocc-MkRfDOhdCHo8?usp=sharing
+
 ## Data Challenge Run Through
 - https://colab.research.google.com/drive/1EObHrV7iZZDe1BMlGjJrTnjUDdjR2EVe?usp=sharing
